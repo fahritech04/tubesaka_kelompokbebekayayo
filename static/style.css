@@ -6,13 +6,13 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #021fa1 0%, #bf0d0d 100%);
     min-height: 100vh;
     color: #333;
 }
 
 .navbar {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgb(255, 255, 255);
     padding: 1rem 0;
     position: sticky;
     top: 0;
@@ -27,7 +27,7 @@ body {
 }
 
 .logo {
-    color: #fff;
+    color: #151212;
     font-size: 1.8rem;
     font-weight: bold;
 }
@@ -39,14 +39,14 @@ body {
 }
 
 .nav-menu a {
-    color: #fff;
+    color: #100e0e;
     text-decoration: none;
     transition: color 0.3s;
     cursor: pointer;
 }
 
 .nav-menu a:hover {
-    color: #667eea;
+    color: #021fa1;
 }
 
 .container {
@@ -75,7 +75,7 @@ main {
 .hero h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: #667eea;
+    color: #021fa1;
 }
 
 .hero p {
@@ -100,31 +100,31 @@ main {
 }
 
 .btn-primary {
-    background: #667eea;
+    background: #021fa1;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #5568d3;
+    background: #021fa1;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
 .btn-secondary {
-    background: #764ba2;
+    background: #b71f05;
     color: white;
 }
 
 .btn-secondary:hover {
-    background: #6a3f8f;
+    background: #b71f05;
     transform: translateY(-2px);
 }
 
 .section-title {
     font-size: 2rem;
-    color: #667eea;
+    color: #021fa1;
     margin-bottom: 2rem;
-    border-bottom: 3px solid #667eea;
+    border-bottom: 3px solid #021fa1;
     padding-bottom: 0.5rem;
 }
 
@@ -138,14 +138,14 @@ main {
     align-items: center;
     padding: 1rem;
     background: #f8f9fa;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #021fa1;
     margin-bottom: 0.5rem;
     border-radius: 5px;
 }
 
 .top-item-rank {
     font-weight: bold;
-    color: #667eea;
+    color: #021fa1;
     font-size: 1.2rem;
     min-width: 50px;
 }
@@ -157,7 +157,7 @@ main {
 
 .top-item-value {
     font-weight: bold;
-    color: #764ba2;
+    color: #b71f05;
 }
 
 .algorithm-results {
@@ -168,7 +168,7 @@ main {
 }
 
 .algo-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #021fa1 0%, #b71f05 100%);
     color: white;
     padding: 2rem;
     border-radius: 10px;
@@ -206,7 +206,7 @@ main {
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #c50c0c 0%, #c70b24 100%);
     color: white;
     padding: 1.5rem;
     border-radius: 10px;
@@ -239,7 +239,7 @@ main {
 }
 
 .data-table thead {
-    background: #667eea;
+    background: #021fa1;
     color: white;
 }
 
@@ -265,7 +265,7 @@ main {
 
 .spinner {
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #667eea;
+    border-top: 4px solid #021fa1;
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -283,13 +283,13 @@ main {
     color: #721c24;
     padding: 1rem;
     border-radius: 5px;
-    border-left: 4px solid #f5576c;
+    border-left: 4px solid #cc112a;
     margin: 1rem 0;
 }
 
 footer {
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
+    background: rgb(255, 255, 255);
+    color: rgb(14, 3, 3);
     text-align: center;
     padding: 2rem;
     margin-top: 3rem;
@@ -297,7 +297,7 @@ footer {
 
 /* Performance Analysis Styles */
 .performance-form {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #021fa1 0%, #b71f05 100%);
     padding: 2rem;
     border-radius: 10px;
     margin-bottom: 2rem;
@@ -325,7 +325,7 @@ footer {
 
 .form-group input:focus {
     outline: none;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgb(255, 255, 255);
 }
 
 .helper-text {
@@ -340,11 +340,11 @@ footer {
     padding: 2rem;
     margin: 2rem 0;
     border-radius: 10px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #021fa1;
 }
 
 .perf-section h4 {
-    color: #667eea;
+    color: #021fa1;
     margin-bottom: 1rem;
     font-size: 1.3rem;
 }
@@ -362,7 +362,7 @@ footer {
 }
 
 .complexity {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #021fa1 0%, #b70b22 100%);
     color: white;
     border-left: none;
 }
@@ -378,7 +378,7 @@ footer {
 }
 
 .complexity-item {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgb(255, 255, 255);
     padding: 1rem;
     border-radius: 5px;
     backdrop-filter: blur(10px);
