@@ -43,9 +43,9 @@ def hitung_waktu_algoritma(fungsi_cari, daftar_menu):
 
 def cetak_hasil(judul, menu_terlaris, waktu):
     print(f"{'='*50}\n{judul}\n{'='*50}")
-    print(f"Menu Terlaris  : {menu_terlaris['nama']}")
-    print(f"Total Terjual  : {menu_terlaris['jumlah']:,} porsi")
-    print(f"Waktu Eksekusi : {waktu:.8f} detik\n")
+    print(f"Menu Terlaris: {menu_terlaris['nama']}")
+    print(f"Total Terjual: {menu_terlaris['jumlah']:,} porsi")
+    print(f"Waktu        : {waktu:.8f} detik\n")
 
 if __name__ == "__main__":
     bulan = ['jan','feb','mar','apr','mei','jun','jul','aug','sep','okt','nov','des']
@@ -60,14 +60,14 @@ if __name__ == "__main__":
     pd.DataFrame(semua_menu).to_csv('menu_terlaris_tahunan.csv', index=False)
     
     print("="*50)
-    print("TOP 10 MENU TERLARIS TAHUN 2024")
+    print("Top 10 Menu Terlaris Tahun 2024")
     print("="*50)
     for i, menu in enumerate(semua_menu[:10], 1):
         print(f"{i:2d}. {menu['nama']:<35} : {menu['jumlah']:>6,} porsi")
     print()
     
     terlaris, waktu = hitung_waktu_algoritma(cari_menu_terlaris_iteratif, semua_menu)
-    cetak_hasil("ALGORITMA ITERATIF", terlaris, waktu)
+    cetak_hasil("Algoritma Iteratif", terlaris, waktu)
     
     terlaris, waktu = hitung_waktu_algoritma(cari_menu_terlaris_rekursif, semua_menu)
-    cetak_hasil("ALGORITMA REKURSIF (Divide & Conquer)", terlaris, waktu)
+    cetak_hasil("Algoritma Rekursif (Divide & Conquer)", terlaris, waktu)

@@ -47,9 +47,9 @@ def hitung_waktu_algoritma(fungsi_cari, data):
 
 def cetak_hasil(judul, hari_tertinggi, waktu):
     print(f"{'='*50}\n{judul}\n{'='*50}")
-    print(f"Tanggal        : {hari_tertinggi['tanggal']}")
-    print(f"Pendapatan     : Rp {hari_tertinggi['pendapatan']:,}")
-    print(f"Waktu Eksekusi : {waktu:.8f} detik\n")
+    print(f"Tanggal    : {hari_tertinggi['tanggal']}")
+    print(f"Pendapatan : Rp {hari_tertinggi['pendapatan']:,}")
+    print(f"Waktu      : {waktu:.8f} detik\n")
 
 if __name__ == "__main__":
     bulan = ['jan','feb','mar','apr','mei','jun','jul','aug','sep','okt','nov','des']
@@ -64,25 +64,25 @@ if __name__ == "__main__":
     pd.DataFrame(data_pendapatan_sorted).to_csv('pendapatan_harian_2024.csv', index=False)
     
     print("="*50)
-    print("TOP 10 PENDAPATAN HARIAN TERTINGGI 2024")
+    print("Top 10 Pendapatan Harian Tertinggi 2024")
     print("="*50)
     for i, hari in enumerate(data_pendapatan_sorted[:10], 1):
         print(f"{i:2d}. {hari['tanggal']} : Rp {hari['pendapatan']:>10,}")
     print()
     
     tertinggi, waktu = hitung_waktu_algoritma(cari_pendapatan_tertinggi_iteratif, data_pendapatan)
-    cetak_hasil("ALGORITMA ITERATIF", tertinggi, waktu)
+    cetak_hasil("Algoritma Iteratif", tertinggi, waktu)
     
     tertinggi, waktu = hitung_waktu_algoritma(cari_pendapatan_tertinggi_rekursif, data_pendapatan)
-    cetak_hasil("ALGORITMA REKURSIF (Divide & Conquer)", tertinggi, waktu)
+    cetak_hasil("Algoritma Rekursif (Divide & Conquer)", tertinggi, waktu)
     
     total = sum(h['pendapatan'] for h in data_pendapatan)
     print("="*50)
-    print("STATISTIK PENDAPATAN 2024")
+    print("Statistik Pendapatan 2024")
     print("="*50)
-    print(f"Total Hari         : {len(data_pendapatan)} hari")
-    print(f"Total Pendapatan   : Rp {total:,}")
-    print(f"Rata-rata Harian   : Rp {total / len(data_pendapatan):,.0f}")
-    print(f"Tertinggi          : Rp {data_pendapatan_sorted[0]['pendapatan']:,}")
-    print(f"Terendah           : Rp {data_pendapatan_sorted[-1]['pendapatan']:,}")
+    print(f"Total Hari      : {len(data_pendapatan)} hari")
+    print(f"Total Pendapatan: Rp {total:,}")
+    print(f"Rata-rata/Hari  : Rp {total / len(data_pendapatan):,.0f}")
+    print(f"Tertinggi       : Rp {data_pendapatan_sorted[0]['pendapatan']:,}")
+    print(f"Terendah        : Rp {data_pendapatan_sorted[-1]['pendapatan']:,}")
     print("="*50)

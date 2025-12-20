@@ -84,7 +84,7 @@ def hitung_koef_nonhom(data):
 
 if __name__ == "__main__":
     print("="*80)
-    print("ANALISIS: RELASI REKURENSI LINIER NON-HOMOGEN")
+    print("Analisis - Relasi Rekurensi Linier Non-Homogen")
     print("="*80)
     
     data = baca_data()
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         print(f"{p:<30}{totals[p]:<11.0f}{totals[p]/12:<11.1f}{pct:<7.1f}%")
     print(f"{'-'*80}\nTOTAL {gt:<20.0f}{gt/12:<11.1f}100.0%\n")
     
-    print(f"{'='*80}\nANALISIS PER PRODUK: T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3) + f(n)\n{'='*80}")
+    print(f"{'='*80}\nAnalisis Per Produk: T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3) + f(n)\n{'='*80}")
     
     for p in PRODUK:
         d = data[p]
@@ -110,8 +110,8 @@ if __name__ == "__main__":
         k, f_n = hitung_koef_nonhom(d)
         v = [float(x) for x in d[:3]]
         
-        print(f"\n{'-'*80}\nPRODUK: {p}")
-        print(f"Homogen: T(n) = {k[0]:.4f}·T(n-1) + {k[1]:.4f}·T(n-2) + {k[2]:.4f}·T(n-3)")
+        print(f"\n{'-'*80}\nProduk: {p}")
+        print(f"Formula homogen: T(n) = {k[0]:.4f}·T(n-1) + {k[1]:.4f}·T(n-2) + {k[2]:.4f}·T(n-3)")
         print(f"f(n): {[f'{x:.0f}' for x in f_n[3:]]}")
         print(f"Sum Koef={sum(k):.4f} | Initial: {[int(x) for x in v]}")
         

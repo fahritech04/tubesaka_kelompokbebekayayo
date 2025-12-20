@@ -75,22 +75,22 @@ def tampilkan_ringkasan(data):
     totals = {p: sum(data[p]) for p in PRODUK}
     gt = sum(totals.values())
     
-    print(f"\n{'='*80}\nRINGKASAN PENJUALAN\n{'='*80}\n")
+    print(f"\n{'='*80}\nRingkasan Penjualan\n{'='*80}\n")
     print(f"{'Produk':<30}{'Total':<12}{'Rata/Bln':<12}{'%':<8}")
-    print("─" * 80)
+    print("-" * 80)
     
     for p in sorted(PRODUK, key=lambda x: totals[x], reverse=True):
         t = totals[p]
         pct = (t / gt * 100 if gt else 0)
         print(f"{p:<30}{t:<11.0f}{t/12:<11.1f}{pct:<7.1f}%")
     
-    print("─" * 80)
+    print("-" * 80)
     print(f"{'TOTAL':<30}{gt:<11.0f}{gt/12:<11.1f}{'100.0':<7}%\n")
     return totals
 
 if __name__ == "__main__":
     print("="*80)
-    print("ANALISIS KOMPLEKSITAS: RELASI REKURENSI LINIER HOMOGEN")
+    print("Analisis Kompleksitas - Relasi Rekurensi Linier Homogen")
     print("="*80)
     
     data = baca_data_excel()
@@ -108,10 +108,10 @@ if __name__ == "__main__":
         k = hitung_koefisien(d)
         
         print(f"\n{'='*80}")
-        print(f"PRODUK: {p}")
+        print(f"Produk: {p}")
         print(f"{'='*80}")
-        print(f"T(n) = {k[0]:.6f}*T(n-1) + {k[1]:.6f}*T(n-2) + {k[2]:.6f}*T(n-3)")
-        print(f"∑Koef = {sum(k):.6f} | Data awal: {[int(x) for x in d[:3]]}\n")
+        print(f"Formula: T(n) = {k[0]:.4f}*T(n-1) + {k[1]:.4f}*T(n-2) + {k[2]:.4f}*T(n-3)")
+        print(f"Total koef = {sum(k):.4f} | Data awal: {[int(x) for x in d[:3]]}\n")
         
         algos = {"Iteratif": solve_iteratif, "Matrix": solve_matrix, "Closed": solve_closed_form}
         for algo in algos:
