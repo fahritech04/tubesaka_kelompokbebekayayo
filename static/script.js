@@ -210,6 +210,29 @@ function showLoading() {
     `;
 }
 
+function goHome() {
+    document.getElementById('content').innerHTML = `
+        <section class="hero">
+            <h2>Selamat Datang</h2>
+            <p>Platform analisis data penjualan usaha Bebek Bakar 2024</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="loadPendapatan()">Pendapatan</button>
+                <button class="btn btn-secondary" onclick="loadMenu()">Menu Terlaris</button>
+            </div>
+            <br><br>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="loadHomogen()">Relasi Homogen</button>
+                <button class="btn btn-secondary" onclick="loadNonhomogen()">Relasi Non-Homogen</button>
+            </div>
+            <br><br>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="loadPerformance()">Analisis Performa</button>
+            </div>
+        </section>
+    `;
+}
+
+
 function loadPerformance() {
     let html = '<div class="section-title">⚡ Analisis Performa Algoritma</div>';
     
@@ -409,17 +432,17 @@ window.addEventListener('DOMContentLoaded', function() {
             <h2>Selamat Datang</h2>
             <p>Platform analisis data penjualan usaha Bebek Bakar 2024</p>
             <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="loadPendapatan()">💰 Pendapatan</button>
-                <button class="btn btn-secondary" onclick="loadMenu()">🍗 Menu Terlaris</button>
+                <button class="btn btn-primary" onclick="loadPendapatan()">Pendapatan</button>
+                <button class="btn btn-secondary" onclick="loadMenu()">Menu Terlaris</button>
             </div>
             <br><br>
             <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="loadHomogen()">📊 Relasi Homogen</button>
-                <button class="btn btn-secondary" onclick="loadNonhomogen()">📈 Relasi Non-Homogen</button>
+                <button class="btn btn-primary" onclick="loadHomogen()">Relasi Homogen</button>
+                <button class="btn btn-secondary" onclick="loadNonhomogen()">Relasi Non-Homogen</button>
             </div>
             <br><br>
             <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="loadPerformance()">⚡ Analisis Performa</button>
+                <button class="btn btn-primary" onclick="loadPerformance()">Analisis Performa</button>
             </div>
         </section>
     `;
