@@ -1,213 +1,147 @@
-function loadPendapatan() {
+// Helper: Render top list items
+function renderTopList(items, displayKey, valueKey, valueFormat = 'text') {
+    return items.map((item, idx) => {
+        let value = item[valueKey];
+        if (valueFormat === 'rupiah') value = `Rp ${value.toLocaleString('id-ID')}`;
+        else if (valueFormat === 'porsi') value = `${value.toLocaleString('id-ID')} porsi`;
+        return `<div class="top-item">
+            <span class="top-item-rank">#${idx + 1}</span>
+            <span class="top-item-name">${item[displayKey]}</span>
+            <span class="top-item-value">${value}</span>
+        </div>`;
+    }).join('');
+}
+
+// Helper: Render stat cards
+function renderStatCards(stats) {
+    const colors = [
+        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+        'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+    ];
+    
+    return stats.map((stat, idx) => `<div class="stat-card" style="background: ${colors[idx % 4]};">
+        <h4>${stat.label}</h4>
+        <div class="stat-value">${stat.value}</div>
+    </div>`).join('');
+}
+
+// Generic load function
+function loadData(endpoint, renderer) {
     showLoading();
-    fetch('/api/pendapatan')
-        .then(response => response.json())
-        .then(data => {
-            let html = '<div class="section-title">💰 Analisis Pendapatan Harian 2024</div>';
-            
-            // Top 10
-            html += '<h3>Top 10 Pendapatan Tertinggi</h3>';
-            html += '<div class="top-list">';
-            data.top10.forEach((item, idx) => {
-                html += `<div class="top-item">
-                    <span class="top-item-rank">#${idx + 1}</span>
-                    <span class="top-item-name">${item.tanggal}</span>
-                    <span class="top-item-value">Rp ${item.pendapatan.toLocaleString('id-ID')}</span>
-                </div>`;
-            });
-            html += '</div>';
-            
-            // Algorithm Results
-            html += '<h3>Perbandingan Algoritma</h3>';
-            html += '<div class="algorithm-results">';
-            html += `<div class="algo-card">
-                <h3>🔄 Algoritma Iteratif</h3>
-                <p>Tanggal: <strong>${data.iteratif.tanggal}</strong></p>
-                <div class="value">Rp ${data.iteratif.pendapatan.toLocaleString('id-ID')}</div>
-                <div class="time">Waktu: ${data.iteratif.waktu} detik</div>
-            </div>`;
-            
-            html += `<div class="algo-card">
-                <h3>🌳 Algoritma Rekursif (D&C)</h3>
-                <p>Tanggal: <strong>${data.rekursif.tanggal}</strong></p>
-                <div class="value">Rp ${data.rekursif.pendapatan.toLocaleString('id-ID')}</div>
-                <div class="time">Waktu: ${data.rekursif.waktu} detik</div>
-            </div>`;
-            html += '</div>';
-            
-            // Statistics
-            html += '<h3>Statistik Pendapatan</h3>';
-            html += '<div class="statistik">';
-            html += `<div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <h4>Total Hari</h4>
-                <div class="stat-value">${data.statistik.total_hari}</div>
-            </div>`;
-            html += `<div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <h4>Total Pendapatan</h4>
-                <div class="stat-value">Rp ${(data.statistik.total_pendapatan / 1000000).toFixed(1)}M</div>
-            </div>`;
-            html += `<div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                <h4>Rata-rata Harian</h4>
-                <div class="stat-value">Rp ${data.statistik.rata_rata.toLocaleString('id-ID')}</div>
-            </div>`;
-            html += `<div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                <h4>Selisih (Tertinggi - Terendah)</h4>
-                <div class="stat-value">Rp ${(data.statistik.tertinggi - data.statistik.terendah).toLocaleString('id-ID')}</div>
-            </div>`;
-            html += '</div>';
-            
-            document.getElementById('content').innerHTML = html;
-        })
-        .catch(err => {
-            document.getElementById('content').innerHTML = '<div class="error">Error: ' + err.message + '</div>';
-        });
+    fetch(`/api/${endpoint}`)
+        .then(r => r.json())
+        .then(data => document.getElementById('content').innerHTML = renderer(data))
+        .catch(err => document.getElementById('content').innerHTML = `<div class="error">Error: ${err.message}</div>`);
+}
+
+function loadPendapatan() {
+    loadData('pendapatan', data => {
+        let html = '<div class="section-title">💰 Analisis Pendapatan Harian 2024</div>';
+        html += '<h3>Top 10 Pendapatan Tertinggi</h3>';
+        html += `<div class="top-list">${renderTopList(data.top10, 'tanggal', 'pendapatan', 'rupiah')}</div>`;
+        
+        html += '<h3>Perbandingan Algoritma</h3><div class="algorithm-results">';
+        html += `<div class="algo-card"><h3>🔄 Iteratif</h3><p>Tanggal: <strong>${data.iteratif.tanggal}</strong></p>
+            <div class="value">Rp ${data.iteratif.pendapatan.toLocaleString('id-ID')}</div>
+            <div class="time">Waktu: ${data.iteratif.waktu} detik</div></div>`;
+        html += `<div class="algo-card"><h3>🌳 Rekursif (D&C)</h3><p>Tanggal: <strong>${data.rekursif.tanggal}</strong></p>
+            <div class="value">Rp ${data.rekursif.pendapatan.toLocaleString('id-ID')}</div>
+            <div class="time">Waktu: ${data.rekursif.waktu} detik</div></div></div>`;
+        
+        html += '<h3>Statistik Pendapatan</h3><div class="statistik">';
+        html += renderStatCards([
+            {label: 'Total Hari', value: data.statistik.total_hari},
+            {label: 'Total Pendapatan', value: `Rp ${(data.statistik.total_pendapatan / 1000000).toFixed(1)}M`},
+            {label: 'Rata-rata Harian', value: `Rp ${data.statistik.rata_rata.toLocaleString('id-ID')}`},
+            {label: 'Selisih', value: `Rp ${(data.statistik.tertinggi - data.statistik.terendah).toLocaleString('id-ID')}`}
+        ]);
+        html += '</div>';
+        
+        return html;
+    });
 }
 
 function loadMenu() {
-    showLoading();
-    fetch('/api/menu')
-        .then(response => response.json())
-        .then(data => {
-            let html = '<div class="section-title">🍗 Menu Terlaris Tahun 2024</div>';
-            
-            // Top 10
-            html += '<h3>Top 10 Menu Terlaris</h3>';
-            html += '<div class="top-list">';
-            data.top10.forEach((item, idx) => {
-                html += `<div class="top-item">
-                    <span class="top-item-rank">#${idx + 1}</span>
-                    <span class="top-item-name">${item.nama}</span>
-                    <span class="top-item-value">${item.jumlah.toLocaleString('id-ID')} porsi</span>
-                </div>`;
-            });
-            html += '</div>';
-            
-            // Algorithm Results
-            html += '<h3>Perbandingan Algoritma</h3>';
-            html += '<div class="algorithm-results">';
-            html += `<div class="algo-card">
-                <h3>🔄 Algoritma Iteratif</h3>
-                <p>Menu: <strong>${data.iteratif.nama}</strong></p>
-                <div class="value">${data.iteratif.jumlah.toLocaleString('id-ID')} porsi</div>
-                <div class="time">Waktu: ${data.iteratif.waktu} detik</div>
-            </div>`;
-            
-            html += `<div class="algo-card">
-                <h3>🌳 Algoritma Rekursif (D&C)</h3>
-                <p>Menu: <strong>${data.rekursif.nama}</strong></p>
-                <div class="value">${data.rekursif.jumlah.toLocaleString('id-ID')} porsi</div>
-                <div class="time">Waktu: ${data.rekursif.waktu} detik</div>
-            </div>`;
-            html += '</div>';
-            
-            // Statistics
-            html += '<h3>Statistik Penjualan</h3>';
-            html += '<div class="statistik">';
-            html += `<div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <h4>Total Menu</h4>
-                <div class="stat-value">${data.total_menu}</div>
-            </div>`;
-            html += `<div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <h4>Total Penjualan</h4>
-                <div class="stat-value">${data.total_penjualan.toLocaleString('id-ID')}</div>
-            </div>`;
-            html += `<div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                <h4>Rata-rata per Menu</h4>
-                <div class="stat-value">${Math.round(data.total_penjualan / data.total_menu).toLocaleString('id-ID')}</div>
-            </div>`;
-            html += '</div>';
-            
-            document.getElementById('content').innerHTML = html;
-        })
-        .catch(err => {
-            document.getElementById('content').innerHTML = '<div class="error">Error: ' + err.message + '</div>';
-        });
+    loadData('menu', data => {
+        let html = '<div class="section-title">🍗 Menu Terlaris Tahun 2024</div>';
+        html += '<h3>Top 10 Menu Terlaris</h3>';
+        html += `<div class="top-list">${renderTopList(data.top10, 'nama', 'jumlah', 'porsi')}</div>`;
+        
+        html += '<h3>Perbandingan Algoritma</h3><div class="algorithm-results">';
+        html += `<div class="algo-card"><h3>🔄 Iteratif</h3><p>Menu: <strong>${data.iteratif.nama}</strong></p>
+            <div class="value">${data.iteratif.jumlah.toLocaleString('id-ID')} porsi</div>
+            <div class="time">Waktu: ${data.iteratif.waktu} detik</div></div>`;
+        html += `<div class="algo-card"><h3>🌳 Rekursif (D&C)</h3><p>Menu: <strong>${data.rekursif.nama}</strong></p>
+            <div class="value">${data.rekursif.jumlah.toLocaleString('id-ID')} porsi</div>
+            <div class="time">Waktu: ${data.rekursif.waktu} detik</div></div></div>`;
+        
+        html += '<h3>Statistik Penjualan</h3><div class="statistik">';
+        html += renderStatCards([
+            {label: 'Total Menu', value: data.total_menu},
+            {label: 'Total Penjualan', value: data.total_penjualan.toLocaleString('id-ID')},
+            {label: 'Rata-rata per Menu', value: Math.round(data.total_penjualan / data.total_menu).toLocaleString('id-ID')}
+        ]);
+        html += '</div>';
+        
+        return html;
+    });
 }
 
 function loadHomogen() {
-    showLoading();
-    fetch('/api/relasi-homogen')
-        .then(response => response.json())
-        .then(data => {
-            let html = '<div class="section-title">📊 Analisis Relasi Rekurensi Linier Homogen</div>';
-            html += '<p style="color: #666; margin-bottom: 2rem;">Formula: T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3)</p>';
-            
-            data.forEach((produk, idx) => {
-                html += `<div style="margin-bottom: 3rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">`;
-                html += `<h3 style="color: #667eea; margin-bottom: 1rem;">Produk ${idx + 1}: ${produk.produk}</h3>`;
-                
-                html += `<div style="background: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
-                    <p><strong>Koefisien:</strong> a=${produk.koef[0]}, b=${produk.koef[1]}, c=${produk.koef[2]}</p>
-                    <p><strong>Jumlah Koefisien:</strong> ${produk.sum_koef}</p>
-                    <p><strong>Data Awal (3 bulan):</strong> ${produk.data_awal.join(', ')}</p>
-                </div>`;
-                
-                html += `<div style="background: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+    loadData('relasi-homogen', data => {
+        let html = '<div class="section-title">📊 Relasi Rekurensi Linier Homogen</div>';
+        html += '<p style="color: #666; margin-bottom: 2rem;">T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3)</p>';
+        
+        data.forEach((p, idx) => {
+            html += `<div style="margin-bottom: 3rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">
+                <h3 style="color: #667eea;">Produk ${idx + 1}: ${p.produk}</h3>
+                <div style="background: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                    <p><strong>Koefisien:</strong> a=${p.koef[0]}, b=${p.koef[1]}, c=${p.koef[2]}</p>
+                    <p><strong>∑Koef:</strong> ${p.sum_koef} | <strong>Data Awal:</strong> ${p.data_awal.join(', ')}</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
                     <h4>Prediksi Bulan ke-12</h4>
-                    <p>Metode Iteratif: <strong>${produk.prediksi.iteratif}</strong></p>
-                    <p>Metode Matrix: <strong>${produk.prediksi.matrix}</strong></p>
-                    <p>Metode Closed-Form: <strong>${produk.prediksi.closed}</strong></p>
-                </div>`;
-                
-                html += `<div style="background: #fff3cd; padding: 1rem; border-radius: 5px;">
-                    <p><strong>Rata-rata Error:</strong> ${produk.rata_rata_error}</p>
-                </div>`;
-                html += `</div>`;
-            });
-            
-            document.getElementById('content').innerHTML = html;
-        })
-        .catch(err => {
-            document.getElementById('content').innerHTML = '<div class="error">Error: ' + err.message + '</div>';
+                    <p>Iteratif: <strong>${p.prediksi.iteratif}</strong> | Matrix: <strong>${p.prediksi.matrix}</strong> | Closed: <strong>${p.prediksi.closed}</strong></p>
+                </div>
+                <div style="background: #fff3cd; padding: 1rem; border-radius: 5px;">
+                    <p><strong>Rata-rata Error:</strong> ${p.rata_rata_error}</p>
+                </div>
+            </div>`;
         });
+        
+        return html;
+    });
 }
 
 function loadNonhomogen() {
-    showLoading();
-    fetch('/api/relasi-nonhomogen')
-        .then(response => response.json())
-        .then(data => {
-            let html = '<div class="section-title">📈 Analisis Relasi Rekurensi Linier Non-Homogen</div>';
-            html += '<p style="color: #666; margin-bottom: 2rem;">Formula: T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3) + f(n)</p>';
-            
-            data.forEach((produk, idx) => {
-                html += `<div style="margin-bottom: 3rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">`;
-                html += `<h3 style="color: #667eea; margin-bottom: 1rem;">Produk ${idx + 1}: ${produk.produk}</h3>`;
-                
-                html += `<div style="background: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
-                    <p><strong>Koefisien Homogen:</strong> a=${produk.koef[0]}, b=${produk.koef[1]}, c=${produk.koef[2]}</p>
-                    <p><strong>Jumlah Koefisien:</strong> ${produk.sum_koef}</p>
-                    <p><strong>Data Awal:</strong> ${produk.data_awal.join(', ')}</p>
-                    <p><strong>Non-homogen f(n):</strong> ${produk.f_n.join(', ')}</p>
-                </div>`;
-                
-                html += `<div style="background: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
-                    <h4>Prediksi</h4>
-                    <p>Bulan ke-6: <strong>${produk.prediksi.bulan_6}</strong></p>
-                    <p>Bulan ke-12: <strong>${produk.prediksi.bulan_12}</strong></p>
-                </div>`;
-                
-                html += `<div style="background: #fff3cd; padding: 1rem; border-radius: 5px;">
-                    <p><strong>Rata-rata Error:</strong> ${produk.rata_rata_error}</p>
-                    <p><strong>Status:</strong> ${produk.status}</p>
-                </div>`;
-                html += `</div>`;
-            });
-            
-            document.getElementById('content').innerHTML = html;
-        })
-        .catch(err => {
-            document.getElementById('content').innerHTML = '<div class="error">Error: ' + err.message + '</div>';
+    loadData('relasi-nonhomogen', data => {
+        let html = '<div class="section-title">📈 Relasi Rekurensi Non-Homogen</div>';
+        html += '<p style="color: #666; margin-bottom: 2rem;">T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3) + f(n)</p>';
+        
+        data.forEach((p, idx) => {
+            html += `<div style="margin-bottom: 3rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">
+                <h3 style="color: #667eea;">Produk ${idx + 1}: ${p.produk}</h3>
+                <div style="background: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                    <p><strong>Koef:</strong> a=${p.koef[0]}, b=${p.koef[1]}, c=${p.koef[2]} (∑=${p.sum_koef})</p>
+                    <p><strong>Data:</strong> ${p.data_awal.join(', ')} | <strong>f(n):</strong> ${p.f_n.join(', ')}</p>
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                    <p>Bulan 6: <strong>${p.prediksi.bulan_6}</strong> | Bulan 12: <strong>${p.prediksi.bulan_12}</strong></p>
+                </div>
+                <div style="background: #fff3cd; padding: 1rem; border-radius: 5px;">
+                    <p><strong>Error:</strong> ${p.rata_rata_error} | <strong>Status:</strong> ${p.status}</p>
+                </div>
+            </div>`;
         });
+        
+        return html;
+    });
 }
 
 function showLoading() {
-    document.getElementById('content').innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Memuat data...</p>
-        </div>
-    `;
+    document.getElementById('content').innerHTML = '<div class="loading"><div class="spinner"></div><p>Memuat data...</p></div>';
 }
 
 function goHome() {
@@ -222,7 +156,7 @@ function goHome() {
             <br><br>
             <div class="hero-buttons">
                 <button class="btn btn-primary" onclick="loadHomogen()">Relasi Homogen</button>
-                <button class="btn btn-secondary" onclick="loadNonhomogen()">Relasi Non-Homogen</button>
+                <button class="btn btn-secondary" onclick="loadNonhomogen()">Non-Homogen</button>
             </div>
             <br><br>
             <div class="hero-buttons">
@@ -232,218 +166,103 @@ function goHome() {
     `;
 }
 
-
 function loadPerformance() {
     let html = '<div class="section-title">⚡ Analisis Performa Algoritma</div>';
-    
     html += `<div class="performance-form">
         <div class="form-group">
-            <label for="input-n">Masukkan Nilai N (Ukuran Data Maksimal):</label>
-            <input type="number" id="input-n" value="100000" min="1" max="10000000" placeholder="Contoh: 100000">
+            <label>Masukkan Nilai N (Ukuran Data Maksimal):</label>
+            <input type="number" id="input-n" value="100000" min="1" max="10000000">
             <span class="helper-text">Minimal 1, Maksimal 10,000,000</span>
         </div>
         <button class="btn btn-primary" onclick="runPerformanceAnalysis()">🚀 Generate & Analisis</button>
-    </div>`;
-    
-    html += '<div id="performance-results"></div>';
-    
+    </div><div id="performance-results"></div>`;
     document.getElementById('content').innerHTML = html;
 }
 
 function runPerformanceAnalysis() {
     const n = parseInt(document.getElementById('input-n').value);
+    if (!n || n < 1) return alert('Masukkan nilai N yang valid (minimal 1)');
     
-    if (!n || n < 1) {
-        alert('Masukkan nilai N yang valid (minimal 1)');
-        return;
-    }
+    document.getElementById('performance-results').innerHTML = '<div class="loading"><div class="spinner"></div><p>Menganalisis dengan N = ' + n.toLocaleString('id-ID') + '...</p></div>';
     
-    document.getElementById('performance-results').innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Menganalisis performa dengan N = ${n.toLocaleString('id-ID')}...</p>
-        </div>
-    `;
-    
-    fetch('/api/performance-analysis', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ n: n })
-    })
-    .then(response => response.json())
-    .then(data => {
-        displayPerformanceResults(data);
-    })
-    .catch(err => {
-        document.getElementById('performance-results').innerHTML = '<div class="error">Error: ' + err.message + '</div>';
-    });
+    fetch('/api/performance-analysis', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({n})})
+        .then(r => r.json())
+        .then(displayPerformanceResults)
+        .catch(err => document.getElementById('performance-results').innerHTML = `<div class="error">Error: ${err.message}</div>`);
 }
 
 function displayPerformanceResults(data) {
     let html = '<h3>Hasil Analisis Performa</h3>';
     
-    // Perbandingan Pendapatan
-    html += '<div class="perf-section">';
-    html += '<h4>📊 Algoritma Pencarian Pendapatan</h4>';
-    html += createPerformanceChart('Pendapatan', data.sizes, 
-        data.iteratif_pendapatan, data.rekursif_pendapatan, 'Iteratif', 'Rekursif (D&C)');
-    html += '<div class="perf-table">';
-    html += '<table class="data-table">';
-    html += '<thead><tr><th>Ukuran Data</th><th>Iteratif (ms)</th><th>Rekursif (ms)</th><th>Selisih</th></tr></thead>';
-    html += '<tbody>';
-    for (let i = 0; i < data.sizes.length; i++) {
-        const it = data.iteratif_pendapatan[i];
-        const rk = data.rekursif_pendapatan[i];
-        const selisih = ((rk - it) / it * 100).toFixed(2);
-        html += `<tr>
-            <td>${data.sizes[i].toLocaleString('id-ID')}</td>
-            <td>${it.toFixed(6)}</td>
-            <td>${rk.toFixed(6)}</td>
-            <td>${selisih}%</td>
-        </tr>`;
-    }
-    html += '</tbody></table>';
-    html += '</div></div>';
+    html += renderPerfSection('📊 Pencarian Pendapatan', data, 'pendapatan', 'Iteratif', 'Rekursif (D&C)');
+    html += renderPerfSection('🍗 Pencarian Menu Terlaris', data, 'menu', 'Iteratif', 'Rekursif (D&C)');
+    html += renderPerfSection('📈 Relasi Homogen', data, 'homogen', 'Iteratif', 'Matrix Exponentiation');
     
-    // Perbandingan Menu
-    html += '<div class="perf-section">';
-    html += '<h4>🍗 Algoritma Pencarian Menu Terlaris</h4>';
-    html += createPerformanceChart('Menu', data.sizes, 
-        data.iteratif_menu, data.rekursif_menu, 'Iteratif', 'Rekursif (D&C)');
-    html += '<div class="perf-table">';
-    html += '<table class="data-table">';
-    html += '<thead><tr><th>Ukuran Data</th><th>Iteratif (ms)</th><th>Rekursif (ms)</th><th>Selisih</th></tr></thead>';
-    html += '<tbody>';
-    for (let i = 0; i < data.sizes.length; i++) {
-        const it = data.iteratif_menu[i];
-        const rk = data.rekursif_menu[i];
-        const selisih = ((rk - it) / it * 100).toFixed(2);
-        html += `<tr>
-            <td>${data.sizes[i].toLocaleString('id-ID')}</td>
-            <td>${it.toFixed(6)}</td>
-            <td>${rk.toFixed(6)}</td>
-            <td>${selisih}%</td>
-        </tr>`;
-    }
-    html += '</tbody></table>';
+    html += '<div class="perf-section complexity"><h4>📐 Analisis Kompleksitas</h4><div class="complexity-info">';
+    html += '<div class="complexity-item"><h5>O(n) - Iteratif</h5><p>Linear: Waktu bertambah proporsional dengan data</p></div>';
+    html += '<div class="complexity-item"><h5>O(n) - Rekursif D&C</h5><p>Overhead rekursi lebih tinggi meski kompleksitas sama</p></div>';
+    html += '<div class="complexity-item"><h5>O(log n) - Matrix</h5><p>Logaritmik: Efisien untuk nilai n besar</p></div>';
     html += '</div></div>';
-    
-    // Perbandingan Relasi Homogen
-    html += '<div class="perf-section">';
-    html += '<h4>📈 Algoritma Relasi Rekurensi Homogen</h4>';
-    html += createPerformanceChart('Homogen', data.sizes, 
-        data.iteratif_homogen, data.matrix_homogen, 'Iteratif', 'Matrix Exponentiation');
-    html += '<div class="perf-table">';
-    html += '<table class="data-table">';
-    html += '<thead><tr><th>Ukuran Data</th><th>Iteratif (ms)</th><th>Matrix (ms)</th><th>Selisih</th></tr></thead>';
-    html += '<tbody>';
-    for (let i = 0; i < data.sizes.length; i++) {
-        const it = data.iteratif_homogen[i];
-        const m = data.matrix_homogen[i];
-        const selisih = ((m - it) / it * 100).toFixed(2);
-        html += `<tr>
-            <td>${data.sizes[i].toLocaleString('id-ID')}</td>
-            <td>${it.toFixed(6)}</td>
-            <td>${m.toFixed(6)}</td>
-            <td>${selisih}%</td>
-        </tr>`;
-    }
-    html += '</tbody></table>';
-    html += '</div></div>';
-    
-    // Kompleksitas
-    html += '<div class="perf-section complexity">';
-    html += '<h4>📐 Analisis Kompleksitas</h4>';
-    html += `<div class="complexity-info">
-        <div class="complexity-item">
-            <h5>O(n) - Iteratif Pencarian</h5>
-            <p>Linear: Waktu eksekusi bertambah seiring bertambahnya ukuran data secara proporsional</p>
-        </div>
-        <div class="complexity-item">
-            <h5>O(n) - Rekursif Pencarian (Divide & Conquer)</h5>
-            <p>Memiliki overhead rekursi lebih tinggi dibanding iteratif meski kompleksitas sama</p>
-        </div>
-        <div class="complexity-item">
-            <h5>O(log n) - Matrix Exponentiation</h5>
-            <p>Logaritmik: Lebih efisien untuk nilai n besar pada relasi rekurensi</p>
-        </div>
-    </div>`;
-    html += '</div>';
     
     document.getElementById('performance-results').innerHTML = html;
 }
 
-function createPerformanceChart(title, sizes, data1, data2, label1, label2) {
-    const maxValue = Math.max(...data1, ...data2);
-    const chartHeight = 300;
-    const chartWidth = Math.max(sizes.length * 80, 600);
+function renderPerfSection(title, data, type, label1, label2) {
+    const typeMap = {
+        'pendapatan': ['iteratif_pendapatan', 'rekursif_pendapatan'],
+        'menu': ['iteratif_menu', 'rekursif_menu'],
+        'homogen': ['iteratif_homogen', 'matrix_homogen']
+    };
+    const [key1, key2] = typeMap[type];
     
-    let html = `<div class="perf-chart-container" style="overflow-x: auto;">
-        <svg viewBox="0 0 ${chartWidth} ${chartHeight + 50}" width="100%" height="400" style="background: #f8f9fa; border-radius: 5px;">`;
+    let html = `<div class="perf-section"><h4>${title}</h4>`;
+    html += createPerformanceChart(data.sizes, data[key1], data[key2], label1, label2);
+    html += '<div class="perf-table"><table class="data-table"><thead><tr><th>Ukuran</th><th>' + label1 + ' (ms)</th><th>' + label2 + ' (ms)</th><th>Selisih</th></tr></thead><tbody>';
     
-    // Axes
-    html += `<line x1="50" y1="${chartHeight}" x2="${chartWidth - 20}" y2="${chartHeight}" stroke="#999" stroke-width="2"/>`;
-    html += `<line x1="50" y1="10" x2="50" y2="${chartHeight}" stroke="#999" stroke-width="2"/>`;
-    
-    // Grid lines
-    for (let i = 0; i <= 5; i++) {
-        const y = chartHeight - (i * chartHeight / 5);
-        html += `<line x1="45" y1="${y}" x2="${chartWidth - 20}" y2="${y}" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="5,5"/>`;
-        html += `<text x="10" y="${y + 4}" font-size="12" text-anchor="end">${(maxValue / 5 * i).toFixed(2)}</text>`;
+    for (let i = 0; i < data.sizes.length; i++) {
+        const v1 = data[key1][i], v2 = data[key2][i];
+        const diff = ((v2 - v1) / v1 * 100).toFixed(2);
+        html += `<tr><td>${data.sizes[i].toLocaleString('id-ID')}</td><td>${v1.toFixed(6)}</td><td>${v2.toFixed(6)}</td><td>${diff}%</td></tr>`;
     }
     
-    // Data points
-    const barWidth = (chartWidth - 70) / (sizes.length * 2.5);
-    const spacing = (chartWidth - 70) / sizes.length;
+    return html + '</tbody></table></div></div>';
+}
+
+function createPerformanceChart(sizes, data1, data2, label1, label2) {
+    const maxVal = Math.max(...data1, ...data2);
+    const h = 300, w = Math.max(sizes.length * 80, 600);
+    let svg = `<div class="perf-chart-container" style="overflow-x: auto;">
+        <svg viewBox="0 0 ${w} ${h + 50}" width="100%" height="400" style="background: #f8f9fa; border-radius: 5px;">`;
     
+    // Axes
+    svg += `<line x1="50" y1="${h}" x2="${w-20}" y2="${h}" stroke="#999" stroke-width="2"/>
+            <line x1="50" y1="10" x2="50" y2="${h}" stroke="#999" stroke-width="2"/>`;
+    
+    // Grid
+    for (let i = 0; i <= 5; i++) {
+        const y = h - (i * h / 5);
+        svg += `<line x1="45" y1="${y}" x2="${w-20}" y2="${y}" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="5,5"/>
+                <text x="10" y="${y+4}" font-size="12" text-anchor="end">${(maxVal/5*i).toFixed(2)}</text>`;
+    }
+    
+    // Bars
+    const bw = (w - 70) / (sizes.length * 2.5), sp = (w - 70) / sizes.length;
     for (let i = 0; i < sizes.length; i++) {
-        const x = 50 + i * spacing + spacing / 2;
-        const h1 = (data1[i] / maxValue) * chartHeight;
-        const h2 = (data2[i] / maxValue) * chartHeight;
-        
-        // Bars
-        html += `<rect x="${x - barWidth * 1.2}" y="${chartHeight - h1}" width="${barWidth}" height="${h1}" fill="#667eea" opacity="0.8"/>`;
-        html += `<rect x="${x - barWidth * 0.2}" y="${chartHeight - h2}" width="${barWidth}" height="${h2}" fill="#764ba2" opacity="0.8"/>`;
-        
-        // Labels
-        html += `<text x="${x}" y="${chartHeight + 20}" font-size="11" text-anchor="middle" fill="#333">${sizes[i]}</text>`;
+        const x = 50 + i * sp + sp / 2, h1 = (data1[i] / maxVal) * h, h2 = (data2[i] / maxVal) * h;
+        svg += `<rect x="${x - bw * 1.2}" y="${h - h1}" width="${bw}" height="${h1}" fill="#667eea" opacity="0.8"/>
+                <rect x="${x - bw * 0.2}" y="${h - h2}" width="${bw}" height="${h2}" fill="#764ba2" opacity="0.8"/>
+                <text x="${x}" y="${h + 20}" font-size="11" text-anchor="middle" fill="#333">${sizes[i]}</text>`;
     }
     
     // Legend
-    html += `<rect x="${chartWidth - 220}" y="15" width="200" height="60" fill="white" stroke="#ccc" stroke-width="1" rx="3"/>`;
-    html += `<rect x="${chartWidth - 210}" y="25" width="15" height="15" fill="#667eea" opacity="0.8"/>`;
-    html += `<text x="${chartWidth - 190}" y="37" font-size="12">${label1 || 'Algoritma 1'}</text>`;
-    html += `<rect x="${chartWidth - 210}" y="50" width="15" height="15" fill="#764ba2" opacity="0.8"/>`;
-    html += `<text x="${chartWidth - 190}" y="62" font-size="12">${label2 || 'Algoritma 2'}</text>`;
+    svg += `<rect x="${w-220}" y="15" width="200" height="60" fill="white" stroke="#ccc" stroke-width="1" rx="3"/>
+            <rect x="${w-210}" y="25" width="15" height="15" fill="#667eea" opacity="0.8"/>
+            <text x="${w-190}" y="37" font-size="12">${label1}</text>
+            <rect x="${w-210}" y="50" width="15" height="15" fill="#764ba2" opacity="0.8"/>
+            <text x="${w-190}" y="62" font-size="12">${label2}</text>
+            </svg></div>`;
     
-    html += `</svg></div>`;
-    
-    return html;
+    return svg;
 }
 
-
-
-// Load home page on startup
-window.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('content').innerHTML = `
-        <section class="hero">
-            <h2>Selamat Datang</h2>
-            <p>Platform analisis data penjualan usaha Bebek Bakar 2024</p>
-            <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="loadPendapatan()">Pendapatan</button>
-                <button class="btn btn-secondary" onclick="loadMenu()">Menu Terlaris</button>
-            </div>
-            <br><br>
-            <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="loadHomogen()">Relasi Homogen</button>
-                <button class="btn btn-secondary" onclick="loadNonhomogen()">Relasi Non-Homogen</button>
-            </div>
-            <br><br>
-            <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="loadPerformance()">Analisis Performa</button>
-            </div>
-        </section>
-    `;
-});
+window.addEventListener('DOMContentLoaded', goHome);
