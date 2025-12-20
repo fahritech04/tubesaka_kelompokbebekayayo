@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Usaha Bebek Bakar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">🦆 Analisis Bebek Bakar 2024</h1>
+            <ul class="nav-menu">
+                <li><a href="#" onclick="loadPendapatan()">Pendapatan</a></li>
+                <li><a href="#" onclick="loadMenu()">Menu Terlaris</a></li>
+                <li><a href="#" onclick="loadHomogen()">Relasi Homogen</a></li>
+                <li><a href="#" onclick="loadNonhomogen()">Relasi Non-Homogen</a></li>
+                <li><a href="#" onclick="loadPerformance()">Analisis Performa</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div id="content">
+            <section class="hero">
+                <h2>Selamat Datang</h2>
+                <p>Platform analisis data penjualan usaha Bebek Bakar</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="loadPendapatan()">Lihat Pendapatan</button>
+                    <button class="btn btn-secondary" onclick="loadMenu()">Lihat Menu Terlaris</button>
+                </div>
+                <br><br>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="loadHomogen()">Relasi Homogen</button>
+                    <button class="btn btn-secondary" onclick="loadNonhomogen()">Relasi Non-Homogen</button>
+                </div>
+                <br><br>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="loadPerformance()">⚡ Analisis Performa</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Analisis Bebek Bakar | Kelompok Bebekayayo</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
