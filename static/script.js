@@ -265,7 +265,7 @@ function displayPerformanceResults(data) {
     html += '<div class="perf-section">';
     html += '<h4>📊 Algoritma Pencarian Pendapatan</h4>';
     html += createPerformanceChart('Pendapatan', data.sizes, 
-        data.iteratif_pendapatan, data.rekursif_pendapatan);
+        data.iteratif_pendapatan, data.rekursif_pendapatan, 'Iteratif', 'Rekursif (D&C)');
     html += '<div class="perf-table">';
     html += '<table class="data-table">';
     html += '<thead><tr><th>Ukuran Data</th><th>Iteratif (ms)</th><th>Rekursif (ms)</th><th>Selisih</th></tr></thead>';
@@ -288,7 +288,7 @@ function displayPerformanceResults(data) {
     html += '<div class="perf-section">';
     html += '<h4>🍗 Algoritma Pencarian Menu Terlaris</h4>';
     html += createPerformanceChart('Menu', data.sizes, 
-        data.iteratif_menu, data.rekursif_menu);
+        data.iteratif_menu, data.rekursif_menu, 'Iteratif', 'Rekursif (D&C)');
     html += '<div class="perf-table">';
     html += '<table class="data-table">';
     html += '<thead><tr><th>Ukuran Data</th><th>Iteratif (ms)</th><th>Rekursif (ms)</th><th>Selisih</th></tr></thead>';
@@ -311,7 +311,7 @@ function displayPerformanceResults(data) {
     html += '<div class="perf-section">';
     html += '<h4>📈 Algoritma Relasi Rekurensi Homogen</h4>';
     html += createPerformanceChart('Homogen', data.sizes, 
-        data.iteratif_homogen, data.matrix_homogen);
+        data.iteratif_homogen, data.matrix_homogen, 'Iteratif', 'Matrix Exponentiation');
     html += '<div class="perf-table">';
     html += '<table class="data-table">';
     html += '<thead><tr><th>Ukuran Data</th><th>Iteratif (ms)</th><th>Matrix (ms)</th><th>Selisih</th></tr></thead>';
@@ -352,7 +352,7 @@ function displayPerformanceResults(data) {
     document.getElementById('performance-results').innerHTML = html;
 }
 
-function createPerformanceChart(title, sizes, data1, data2) {
+function createPerformanceChart(title, sizes, data1, data2, label1, label2) {
     const maxValue = Math.max(...data1, ...data2);
     const chartHeight = 300;
     const chartWidth = Math.max(sizes.length * 80, 600);
@@ -389,11 +389,11 @@ function createPerformanceChart(title, sizes, data1, data2) {
     }
     
     // Legend
-    html += `<rect x="${chartWidth - 180}" y="15" width="160" height="60" fill="white" stroke="#ccc" stroke-width="1" rx="3"/>`;
-    html += `<rect x="${chartWidth - 170}" y="25" width="15" height="15" fill="#667eea" opacity="0.8"/>`;
-    html += `<text x="${chartWidth - 150}" y="37" font-size="12">Algoritma 1</text>`;
-    html += `<rect x="${chartWidth - 170}" y="50" width="15" height="15" fill="#764ba2" opacity="0.8"/>`;
-    html += `<text x="${chartWidth - 150}" y="62" font-size="12">Algoritma 2</text>`;
+    html += `<rect x="${chartWidth - 220}" y="15" width="200" height="60" fill="white" stroke="#ccc" stroke-width="1" rx="3"/>`;
+    html += `<rect x="${chartWidth - 210}" y="25" width="15" height="15" fill="#667eea" opacity="0.8"/>`;
+    html += `<text x="${chartWidth - 190}" y="37" font-size="12">${label1 || 'Algoritma 1'}</text>`;
+    html += `<rect x="${chartWidth - 210}" y="50" width="15" height="15" fill="#764ba2" opacity="0.8"/>`;
+    html += `<text x="${chartWidth - 190}" y="62" font-size="12">${label2 || 'Algoritma 2'}</text>`;
     
     html += `</svg></div>`;
     
