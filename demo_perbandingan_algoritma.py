@@ -20,8 +20,6 @@ def measure_time(func, *args, runs=100):
 # DEMO 1: Pencarian Maksimum - Kenapa Iteratif Lebih Baik
 print_section("DEMO 1: PENCARIAN MAKSIMUM (Pendapatan Tertinggi)")
 
-print("❓ PERTANYAAN: Algoritma mana yang lebih cepat untuk mencari maksimum?\n")
-
 sizes = [100, 1000, 5000, 10000]
 print(f"{'Size':<10} {'Iteratif (ms)':<15} {'Rekursif (ms)':<15} {'Overhead':<12} {'Winner'}")
 print("-" * 80)
@@ -50,8 +48,6 @@ print("   ✅ GUNAKAN ITERATIF untuk pencarian maksimum!")
 
 # DEMO 2: Relasi Rekurensi - Kapan Matrix Exponentiation Lebih Cepat
 print_section("DEMO 2: RELASI REKURENSI (Prediksi Time Series)")
-
-print("❓ PERTANYAAN: Kapan Matrix Exponentiation lebih cepat dari Iteratif?\n")
 
 v = [500.0, 550.0, 600.0]  # Initial values
 koef = [0.5, 0.3, 0.2]     # Coefficients
@@ -91,7 +87,7 @@ print("                 Ini adalah contoh D&C yang BENAR-BENAR efektif!")
 # DEMO 3: Multiple Query Scenario - Closed Form Dominates
 print_section("DEMO 3: MULTIPLE QUERY SCENARIO")
 
-print("❓ SKENARIO: Prediksi untuk n = [1000, 2000, 5000, 10000] (4 queries)\n")
+print("SKENARIO: Prediksi untuk n = [1000, 2000, 5000, 10000] (4 queries)\n")
 
 query_ns = [1000, 2000, 5000, 10000]
 

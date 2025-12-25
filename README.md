@@ -2,6 +2,14 @@
 
 Aplikasi web untuk menganalisis data penjualan usaha Bebek Bakar tahun 2024 menggunakan berbagai algoritma pencarian dan relasi rekurensi.
 
+## Kelompok BA Academy
+
+| NIM          | Nama                    |
+| ------------ | ----------------------- |
+| 103012580017 | Muhammad Raihan Fahrifi |
+| 103012580011 | Firdaus Akbar Amrullah  |
+| 103012580048 | Rafa Suryaputra         |
+
 ## Tentang Aplikasi
 
 Aplikasi ini menganalisis:
@@ -17,14 +25,19 @@ Aplikasi ini menganalisis:
 ```
 tubes_aka/
 ├── databebek2024/           # Data Excel 12 bulan (jan24.xlsx - des24.xlsx)
+├── static/
+│   ├── images/              # Folder gambar (favicon, dll)
+│   ├── style.css            # Stylesheet
+│   └── script.js            # JavaScript
+├── templates/
+│   └── index.html           # Template HTML
 ├── app.py                   # Flask web server
 ├── app_pendapatan.py        # Modul analisis pendapatan
 ├── app_menuporsi_tahunan.py # Modul analisis menu
 ├── app_relasi_rekurensi_homogen.py
 ├── app_relasi_rekurensi_nonhomogen.py
 ├── config.py                # Konfigurasi & helper functions
-├── static/                  # CSS & JavaScript
-├── templates/               # HTML templates
+├── demo_perbandingan_algoritma.py
 └── requirements.txt
 ```
 
@@ -90,4 +103,4 @@ Aplikasi membaca dari folder `databebek2024/`:
 
 ---
 
-**Kelompok Bebekayayo - Tugas Besar AKA 2024**
+**Kelompok BA Academy - Tugas Besar AKA 2024**
