@@ -290,6 +290,50 @@ def handle_test_nonhomogen(n):
         'info': f'Prediksi bulan ke-{n} dengan faktor eksternal f(n)'
     }
 
+def handle_prediksi_produk(produk_idx, n, tipe='homogen'):
+    """Handler untuk prediksi produk individual dengan n dinamis"""
+    from app_relasi_rekurensi_homogen import baca_data_excel
+    data = baca_data_excel()
+    
+    produk = PRODUK[produk_idx]
+    d = data.get(produk, [])
+    if sum(d) == 0 or len(d) < 4:
+        return {'error': 'Data tidak tersedia'}
+    
+    nilai_awal = [float(x) for x in d[:3]]
+    
+    if tipe == 'homogen':
+        from app_relasi_rekurensi_homogen import hitung_koefisien, solve_iteratif, solve_matrix, solve_closed_form
+        koef = hitung_koefisien(d)
+        
+        # Ukur waktu untuk perbandingan
+        hasil_iter, waktu_iter = ukur_waktu(solve_iteratif, nilai_awal, koef, n, runs=30)
+        hasil_matrix, waktu_matrix = ukur_waktu(solve_matrix, nilai_awal, koef, n, runs=30)
+        hasil_closed, waktu_closed = ukur_waktu(solve_closed_form, nilai_awal, koef, n, runs=30)
+        
+        times = {'Iteratif': waktu_iter, 'Matrix': waktu_matrix, 'Closed': waktu_closed}
+        winner = min(times, key=times.get)
+        
+        return {
+            'produk': produk, 'n': n,
+            'iteratif': {'hasil': f"{hasil_iter[0]:.0f}", 'waktu_ms': waktu_iter, 'waktu_str': f'{waktu_iter:.4f} ms'},
+            'matrix': {'hasil': f"{hasil_matrix[0]:.0f}", 'waktu_ms': waktu_matrix, 'waktu_str': f'{waktu_matrix:.4f} ms'},
+            'closed': {'hasil': f"{hasil_closed[0]:.0f}", 'waktu_ms': waktu_closed, 'waktu_str': f'{waktu_closed:.4f} ms'},
+            'perbandingan': {
+                'winner': winner,
+                'iteratif_vs_matrix': f'{waktu_iter / waktu_matrix:.2f}x' if waktu_matrix < waktu_iter else f'{waktu_matrix / waktu_iter:.2f}x',
+                'iteratif_vs_closed': f'{waktu_iter / waktu_closed:.2f}x' if waktu_closed < waktu_iter else f'{waktu_closed / waktu_iter:.2f}x'
+            }
+        }
+    else:  # nonhomogen
+        from app_relasi_rekurensi_nonhomogen import hitung_koef_nonhom, solve
+        koef, nilai_f = hitung_koef_nonhom(d)
+        hasil, waktu = ukur_waktu(solve, nilai_awal, koef, nilai_f, n, 'iteratif', runs=30)
+        return {
+            'produk': produk, 'n': n,
+            'hasil': {'nilai': f"{hasil:.0f}", 'waktu_ms': waktu, 'waktu_str': f'{waktu:.4f} ms'}
+        }
+
 def handle_performance_analysis(n):
     """Handler untuk performance-analysis endpoint"""
     import random

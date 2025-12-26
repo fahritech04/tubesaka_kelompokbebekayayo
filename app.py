@@ -7,7 +7,7 @@ from app_relasi_rekurensi_homogen import baca_data_excel as baca_data_homogen, s
 from app_relasi_rekurensi_nonhomogen import baca_data as baca_data_nonhomogen
 from config import (FILES as FILES_EXCEL, PRODUK, proses_pencarian_max, proses_relasi_rekurensi,
     ukur_waktu, cari_exact_iteratif, cari_exact_rekursif, build_test_response,
-    handle_test_homogen, handle_test_nonhomogen, handle_performance_analysis, jalankan_demo_pencarian, jalankan_demo_relasi)
+    handle_test_homogen, handle_test_nonhomogen, handle_performance_analysis, jalankan_demo_pencarian, jalankan_demo_relasi, handle_prediksi_produk)
 
 app = Flask(__name__)
 
@@ -102,6 +102,22 @@ def test_relasi_nonhomogen():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/prediksi-produk-homogen', methods=['POST'])
+def prediksi_produk_homogen():
+    try:
+        data = request.get_json()
+        return jsonify(handle_prediksi_produk(data['produk_idx'], data['n'], 'homogen'))
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/prediksi-produk-nonhomogen', methods=['POST'])
+def prediksi_produk_nonhomogen():
+    try:
+        data = request.get_json()
+        return jsonify(handle_prediksi_produk(data['produk_idx'], data['n'], 'nonhomogen'))
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/relasi-nonhomogen')
 def get_relasi_nonhomogen():
     try:
@@ -176,9 +192,9 @@ def demo_comparison():
         waktu_matrix = (time.perf_counter() - start) * 1000
         
         start = time.perf_counter()
-        poly = [1] + [-c for c in koef[::-1]]
+        poly = [1] + [-c for c in koef]
         akar = np.roots(poly)
-        M = np.array([[akar[i]**j for i in range(len(koef))] for j in range(len(koef))], dtype=complex)
+        M = np.array([[akar[j]**i for j in range(len(koef))] for i in range(len(koef))], dtype=complex)
         c = np.linalg.solve(M, np.array(v[:len(koef)], dtype=complex))
         for n in query_ns: result = np.real(sum(c[i] * akar[i]**n for i in range(len(koef))))
         waktu_closed = (time.perf_counter() - start) * 1000

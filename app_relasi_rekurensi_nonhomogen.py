@@ -50,7 +50,8 @@ def solve(nilai_awal, koef, nilai_f, n, method='iteratif'):
 def hitung_koef_nonhom(data):
     if len(data) < 4: return [0.5, 0.3, 0.2], [0]*len(data)
     try:
-        window = min(8, len(data))
+        # Gunakan SEMUA data untuk menghitung koefisien (bukan hanya 8)
+        window = len(data)
         A = np.array([[data[n-1], data[n-2], data[n-3]] for n in range(3, window)])
         b = np.array(data[3:window])
         koef = list(np.linalg.lstsq(A, b, rcond=None)[0])

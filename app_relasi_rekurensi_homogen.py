@@ -28,10 +28,16 @@ def solve_closed_form(nilai_awal, koef, n):
     jumlah_koef = len(koef)
     if n < jumlah_koef: return float(nilai_awal[n])
     try:
-        poly = [1] + [-c for c in koef[::-1]]
+        # Characteristic polynomial: x^k - c1*x^(k-1) - c2*x^(k-2) - ... - ck = 0
+        # Koef dalam urutan: [1, -c1, -c2, -c3] untuk numpy.roots
+        poly = [1] + [-c for c in koef]
         akar = np.roots(poly)  # Nilai eigen (eigenvalues)
-        M = np.array([[akar[i]**j for i in range(jumlah_koef)] for j in range(jumlah_koef)], dtype=complex)
+        
+        # Vandermonde matrix untuk menyelesaikan konstanta
+        # M[i][j] = λⱼⁱ (row i untuk n=i, column j untuk eigenvalue j)
+        M = np.array([[akar[j]**i for j in range(jumlah_koef)] for i in range(jumlah_koef)], dtype=complex)
         konstanta = np.linalg.solve(M, np.array(nilai_awal[:jumlah_koef], dtype=complex))
+        
         # Evaluasi: O(1)! Hanya perlu hitung akar^n
         return np.real(sum(konstanta[i] * akar[i]**n for i in range(jumlah_koef)))
     except: return float(nilai_awal[0])

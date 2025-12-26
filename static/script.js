@@ -65,7 +65,7 @@ function loadPendapatan() {
     const s = data.statistik;
     return `${HTML.section(
       "Analisis Pendapatan Harian 2024"
-    )}<div class="test-box"><h3>🧪 Test Perbandingan Algoritma</h3><div class="test-form"><label>Cari pendapatan sama persis dengan (Rp):</label><input type="number" id="test-pendapatan-target" value="1000000" min="1" step="100000"><button class="btn btn-primary" onclick="testPendapatan()">Test & Bandingkan</button></div><div id="test-pendapatan-result"></div></div><h3>Top 10 Pendapatan Tertinggi</h3><div class="top-list">${renderTopList(
+    )}<div class="test-box"><h3>🧪 Test Perbandingan Algoritma</h3><div class="test-form"><label>Cari pendapatan dengan (Rp):</label><input type="number" id="test-pendapatan-target" value="1000000" min="1" step="100000"><button class="btn btn-primary" onclick="testPendapatan()">Test & Bandingkan</button></div><div id="test-pendapatan-result"></div></div><h3>Top 10 Pendapatan Tertinggi</h3><div class="top-list">${renderTopList(
       data.top10,
       "tanggal",
       "pendapatan",
@@ -88,7 +88,7 @@ function loadMenu() {
     (data) =>
       `${HTML.section(
         "Menu Terlaris Tahun 2024"
-      )}<div class="test-box"><h3>🧪 Test Perbandingan Algoritma</h3><div class="test-form"><label>Cari penjualan sama persis dengan (porsi):</label><input type="number" id="test-menu-target" value="100" min="1" step="10"><button class="btn btn-primary" onclick="testMenu()">Test & Bandingkan</button></div><div id="test-menu-result"></div></div><h3>Top 10 Menu Terlaris</h3><div class="top-list">${renderTopList(
+      )}<div class="test-box"><h3>🧪 Test Perbandingan Algoritma</h3><div class="test-form"><label>Cari penjualan dengan (porsi):</label><input type="number" id="test-menu-target" value="100" min="1" step="10"><button class="btn btn-primary" onclick="testMenu()">Test & Bandingkan</button></div><div id="test-menu-result"></div></div><h3>Top 10 Menu Terlaris</h3><div class="top-list">${renderTopList(
         data.top10,
         "nama",
         "jumlah",
@@ -111,9 +111,13 @@ function renderRelasiProduk(data, isHomogen) {
       const info = isHomogen
         ? HTML.infoBox(HTML.koefInfo(p.koef, p.sum_koef, p.data_awal))
         : HTML.infoBox(`<p><strong>Koef:</strong> a=${p.koef[0]}, b=${p.koef[1]}, c=${p.koef[2]} (∑=${p.sum_koef})</p><p><strong>Data:</strong> ${p.data_awal.join(", ")} | <strong>f(n):</strong> ${p.f_n.join(", ")}</p>`);
-      const prediksi = isHomogen
-        ? HTML.infoBox(`<h4>Prediksi Bulan ke-12</h4><p>Iteratif: <strong>${p.prediksi.iteratif}</strong> | Matrix: <strong>${p.prediksi.matrix}</strong> | Closed: <strong>${p.prediksi.closed}</strong></p>`)
-        : HTML.infoBox(`<p>Bulan 6: <strong>${p.prediksi.bulan_6}</strong> | Bulan 12: <strong>${p.prediksi.bulan_12}</strong></p>`);
+      const prediksiId = `prediksi-${idx}`;
+      const inputId = `n-produk-${idx}`;
+      const labelId = `label-${idx}`;
+      const prediksiContent = isHomogen
+        ? `<h4 id="${labelId}">Prediksi (n=12)</h4><div id="${prediksiId}"><p>Iteratif: <strong>${p.prediksi.iteratif}</strong> | Matrix: <strong>${p.prediksi.matrix}</strong> | Closed: <strong>${p.prediksi.closed}</strong></p></div><div class="test-form" style="margin-top:0.5rem;"><input type="number" id="${inputId}" value="12" min="1" max="100000" style="width:100px;"><button class="btn btn-primary" style="padding:0.3rem 0.8rem;font-size:0.9rem;" onclick="updatePrediksi(${idx}, ${isHomogen})">Update n</button></div>`
+        : `<h4 id="${labelId}">Prediksi (n=6 & n=12)</h4><div id="${prediksiId}"><p>Bulan 6: <strong>${p.prediksi.bulan_6}</strong> | Bulan 12: <strong>${p.prediksi.bulan_12}</strong></p></div><div class="test-form" style="margin-top:0.5rem;"><input type="number" id="${inputId}" value="12" min="1" max="10000" style="width:100px;"><button class="btn btn-primary" style="padding:0.3rem 0.8rem;font-size:0.9rem;" onclick="updatePrediksi(${idx}, ${isHomogen})">Update n</button></div>`;
+      const prediksi = HTML.infoBox(prediksiContent);
       const error = isHomogen ? HTML.warningBox(`<p><strong>Rata-rata Error:</strong> ${p.rata_rata_error}</p>`) : HTML.warningBox(`<p><strong>Error:</strong> ${p.rata_rata_error} | <strong>Status:</strong> ${p.status}</p>`);
       return HTML.produkCard(idx, p.produk, info + prediksi + error);
     })
@@ -121,17 +125,10 @@ function renderRelasiProduk(data, isHomogen) {
 }
 
 function loadHomogen() {
-  loadData(
-    "relasi-homogen",
-    (data) =>
-      `${HTML.section(
-        "Relasi Rekurensi Linier Homogen",
-        "T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3)"
-      )}<div class="test-box"><h3>🧪 Test Perbandingan Algoritma</h3><div class="test-form"><label>Prediksi bulan ke-N:</label><input type="number" id="test-homogen-n" value="12" min="1" max="100000"><button class="btn btn-primary" onclick="testHomogen()">Test & Bandingkan</button></div><div id="test-homogen-result"></div></div>${renderRelasiProduk(
-        data,
-        true
-      )}`
-  );
+  loadData("relasi-homogen", (data) => {
+    window.dataHomogen = data;
+    return `${HTML.section("Relasi Rekurensi Linier Homogen", "T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3)")}${renderRelasiProduk(data, true)}`;
+  });
 }
 
 function testHomogen() {
@@ -148,7 +145,7 @@ function testHomogen() {
         winner === "Iteratif" ? '<span class="badge-winner">WINNER</span>' : ""
       }</div><div class="algo-item ${winner === "Matrix" ? "winner" : ""}"><h5>⚡ Matrix Exp</h5><p>Hasil: ${data.matrix.hasil.toFixed(2)}</p><p>Waktu: <strong>${data.matrix.waktu_str}</strong></p>${
         winner === "Matrix" ? '<span class="badge-winner">WINNER</span>' : ""
-      }</div><div class="algo-item ${winner === "Closed" ? "winner" : ""}"><h5>✨ Closed Form</h5><p>Hasil: ${data.closed.hasil.toFixed(2)}</p><p>Waktu: <strong>${data.closed.waktu_str}</strong></p>${
+      }</div><div class="algo-item ${winner === "Closed" ? "winner" : ""}><h5>✨ Closed Form</h5><p>Hasil: ${data.closed.hasil.toFixed(2)}</p><p>Waktu: <strong>${data.closed.waktu_str}</strong></p>${
         winner === "Closed" ? '<span class="badge-winner">WINNER</span>' : ""
       }</div></div><div class="conclusion"><p><strong>Kesimpulan:</strong> ${winner} adalah yang tercepat!</p><p>Iteratif vs Matrix: ${data.perbandingan.iteratif_vs_matrix}</p><p>Iteratif vs Closed: ${data.perbandingan.iteratif_vs_closed}</p></div></div>`;
     })
@@ -156,17 +153,10 @@ function testHomogen() {
 }
 
 function loadNonhomogen() {
-  loadData(
-    "relasi-nonhomogen",
-    (data) =>
-      `${HTML.section(
-        "Relasi Rekurensi Non-Homogen",
-        "T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3) + f(n)"
-      )}<div class="test-box"><h3>🧪 Test Algoritma Non-Homogen</h3><div class="test-form"><label>Prediksi bulan ke-N:</label><input type="number" id="test-nonhomogen-n" value="12" min="1" max="10000"><button class="btn btn-primary" onclick="testNonhomogen()">Test Algoritma</button></div><div id="test-nonhomogen-result"></div></div>${renderRelasiProduk(
-        data,
-        false
-      )}`
-  );
+  loadData("relasi-nonhomogen", (data) => {
+    window.dataNonhomogen = data;
+    return `${HTML.section("Relasi Rekurensi Non-Homogen", "T(n) = a·T(n-1) + b·T(n-2) + c·T(n-3) + f(n)")}${renderRelasiProduk(data, false)}`;
+  });
 }
 function testNonhomogen() {
   const n = parseInt(document.getElementById("test-nonhomogen-n").value);
@@ -183,6 +173,71 @@ function testNonhomogen() {
     })
     .catch((err) => (resultDiv.innerHTML = `<div class="error">Error: ${err.message}</div>`));
 }
+
+// Fungsi DRY untuk update prediksi (Opsi 2: per produk)
+function updatePrediksi(produkIdx, isHomogen) {
+  const n = parseInt(document.getElementById(`n-produk-${produkIdx}`).value);
+  const targetDiv = document.getElementById(`prediksi-${produkIdx}`);
+  const labelDiv = document.getElementById(`label-${produkIdx}`);
+  targetDiv.innerHTML = '<p style="color:#666;">⏳ Memuat...</p>';
+
+  // Update label
+  if (labelDiv) {
+    labelDiv.textContent = isHomogen ? `Prediksi (n=${n})` : `Prediksi (n=${n})`;
+  }
+
+  const endpoint = isHomogen ? "/api/prediksi-produk-homogen" : "/api/prediksi-produk-nonhomogen";
+  fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ produk_idx: produkIdx, n }) })
+    .then((r) => r.json())
+    .then((data) => {
+      if (data.error) return (targetDiv.innerHTML = `<p style="color:red;">${data.error}</p>`);
+
+      if (isHomogen) {
+        const winner = data.perbandingan.winner;
+        targetDiv.innerHTML = `
+          <div class="algo-comparison" style="margin-top:0.5rem;">
+            <div class="algo-item ${winner === "Iteratif" ? "winner" : ""}" style="padding:0.5rem;">
+              <h5 style="font-size:0.9rem;margin:0 0 0.3rem 0;">🔢 Iteratif</h5>
+              <p style="margin:0.2rem 0;font-size:0.85rem;">Hasil: <strong>${data.iteratif.hasil}</strong></p>
+              <p style="margin:0.2rem 0;font-size:0.85rem;">Waktu: <strong>${data.iteratif.waktu_str}</strong></p>
+              ${winner === "Iteratif" ? '<span class="badge-winner" style="font-size:0.75rem;">WINNER</span>' : ""}
+            </div>
+            <div class="algo-item ${winner === "Matrix" ? "winner" : ""}" style="padding:0.5rem;">
+              <h5 style="font-size:0.9rem;margin:0 0 0.3rem 0;">⚡ Matrix Exp</h5>
+              <p style="margin:0.2rem 0;font-size:0.85rem;">Hasil: <strong>${data.matrix.hasil}</strong></p>
+              <p style="margin:0.2rem 0;font-size:0.85rem;">Waktu: <strong>${data.matrix.waktu_str}</strong></p>
+              ${winner === "Matrix" ? '<span class="badge-winner" style="font-size:0.75rem;">WINNER</span>' : ""}
+            </div>
+            <div class="algo-item ${winner === "Closed" ? "winner" : ""}" style="padding:0.5rem;">
+              <h5 style="font-size:0.9rem;margin:0 0 0.3rem 0;">✨ Closed Form</h5>
+              <p style="margin:0.2rem 0;font-size:0.85rem;">Hasil: <strong>${data.closed.hasil}</strong></p>
+              <p style="margin:0.2rem 0;font-size:0.85rem;">Waktu: <strong>${data.closed.waktu_str}</strong></p>
+              ${winner === "Closed" ? '<span class="badge-winner" style="font-size:0.75rem;">WINNER</span>' : ""}
+            </div>
+          </div>
+          <div class="conclusion" style="padding:0.5rem;margin-top:0.5rem;background:#f0f7ff;border-radius:5px;">
+            <p style="margin:0.2rem 0;font-size:0.85rem;"><strong>Kesimpulan:</strong> ${winner} adalah yang tercepat!</p>
+            <p style="margin:0.2rem 0;font-size:0.85rem;">Iteratif vs Matrix: ${data.perbandingan.iteratif_vs_matrix}</p>
+            <p style="margin:0.2rem 0;font-size:0.85rem;">Iteratif vs Closed: ${data.perbandingan.iteratif_vs_closed}</p>
+          </div>
+        `;
+      } else {
+        targetDiv.innerHTML = `
+          <div class="algo-comparison" style="margin-top:0.5rem;">
+            <div class="algo-item winner" style="padding:0.5rem;">
+              <h5 style="font-size:0.9rem;margin:0 0 0.3rem 0;">🔢 Iteratif Non-Homogen</h5>
+              <p style="margin:0.2rem 0;font-size:0.85rem;">Hasil Prediksi: <strong>${data.hasil.nilai}</strong></p>
+              <p style="margin:0.2rem 0;font-size:0.85rem;">Waktu: <strong>${data.hasil.waktu_str}</strong></p>
+              <span class="badge-winner" style="font-size:0.75rem;">✅ Dengan faktor eksternal</span>
+            </div>
+          </div>
+        `;
+      }
+    })
+    .catch((err) => (targetDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`));
+}
+
+// Hapus fungsi updateSemuaProduk karena tidak digunakan lagi
 
 function goHome() {
   const buttons = [
